@@ -1,0 +1,21 @@
+{
+  "client_required_documents": [
+    "acta_constitutiva",
+    "poder_representante",
+    "csf",
+    "ine"
+  ],
+  "operation_outputs": {
+    "PRODUCT": [
+      "purchase_order",
+      "supply_contract",
+      "payment_order"
+    ],
+    "SERVICE": [
+      "service_proposal",
+      "service_contract",
+      "payment_order",
+      "service_completion_certificate"
+    ]
+  }
+}

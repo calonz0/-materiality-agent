@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AI Fiscal Dashboard</title>
+</head>
+
+<body>
+
+    <h1>🧠 AI Fiscal Dashboard</h1>
+
+    <!-- Upload -->
+    <div style="margin-bottom: 20px;">
+        <input type="file" id="fileInput" multiple>
+        <button onclick="uploadFile()">Upload Files</button>
+    </div>
+
+    <!-- Chat Box -->
+    <div id="chat" style="
+        border: 1px solid #ccc;
+        padding: 15px;
+        height: 400px;
+        overflow-y: scroll;
+        background-color: #f9f9f9;
+        font-family: monospace;
+        margin-bottom: 10px;
+    ">
+    </div>
+
+    <!-- Input + Send -->
+    <div>
+        <input 
+            id="messageInput" 
+            type="text" 
+            placeholder="Type a message..." 
+            style="width: 70%; padding: 10px;"
+        >
+        <button onclick="sendMessage()" style="padding: 10px;">Send</button>
+    </div>
+
+    <script src="app.js"></script>
+
+</body>
+</html>

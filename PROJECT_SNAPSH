@@ -1,0 +1,184 @@
+# 🔥 AI FISCAL SYSTEM — FULL PROJECT SNAPSHOT
+
+===============================
+SYSTEM CONTEXT
+===============================
+
+# AI FISCAL SYSTEM — MASTER SYSTEM CONTEXT (v2)
+
+## PURPOSE
+Enterprise backend for fiscal analysis, invoice validation, and materiality generation.
+
+## FLOW
+invoice → parse → classify → documents → context → materiality → output
+
+## DATA CONTRACT
+
+INPUT:
+{
+  "client_id": "string",
+  "invoice": {}
+}
+
+OUTPUT:
+{
+  "invoice_data": {},
+  "classification": {},
+  "required_documents": [],
+  "context": {},
+  "materiality": {},
+  "final_output": {}
+}
+
+## LLM
+Mode: SIMULATED (ready for future local connection)
+
+## RULES
+- No module breaks structure
+- No AI decisions
+- Everything deterministic
+
+---
+
+===============================
+backend/engines/llm_client.py
+===============================
+
+```python
+class LLMClient:
+    def __init__(self):
+        self.mode = "SIMULATED"
+
+    def generate(self, prompt: str):
+        print("[LLM] SIMULATION MODE")
+
+        return {
+            "status": "success",
+            "response": f"[SIMULATED RESPONSE]\n{prompt}"
+        }
+===============================
+backend/orchestrator/materiality_flow.py
+from ingestion.invoice_parser import parse_invoice
+from classifiers.service_classifier import classify_service
+from document_request.document_checker import check_required_documents
+from context.context_builder import build_context
+from engines.materiality_engine import run_materiality_analysis
+from generators.output_generator import generate_output
+
+
+def run_materiality_process(client_id: str, invoice_data: dict):
+
+    print("[FLOW] START")
+
+    parsed_invoice = parse_invoice(invoice_data)
+    classification = classify_service(parsed_invoice)
+    required_docs = check_required_documents(classification)
+    context = build_context(client_id, parsed_invoice, classification)
+    materiality = run_materiality_analysis(context)
+
+    return generate_output(
+        parsed_invoice,
+        classification,
+        required_docs,
+        context,
+        materiality
+    )
+===============================
+backend/ingestion/invoice_parser.py
+def parse_invoice(invoice_data: dict):
+
+    print("[PARSER] Parsing invoice")
+
+    return {
+        "raw": invoice_data,
+        "amount": invoice_data.get("amount", 0),
+        "description": invoice_data.get("description", ""),
+        "client": invoice_data.get("client", "")
+    }
+===============================
+backend/classifiers/service_classifier.py
+def classify_service(parsed_invoice: dict):
+
+    print("[CLASSIFIER] Classifying service")
+
+    description = parsed_invoice.get("description", "").lower()
+
+    if "product" in description:
+        return {"type": "product"}
+    else:
+        return {"type": "service"}
+===============================
+backend/document_request/document_checker.py
+def check_required_documents(classification: dict):
+
+    print("[DOC CHECK] Checking required documents")
+
+    if classification["type"] == "service":
+        return [
+            "contract",
+            "service_order",
+            "payment_order"
+        ]
+    else:
+        return [
+            "purchase_order",
+            "supply_contract"
+        ]
+===============================
+backend/context/context_builder.py
+def build_context(client_id, invoice_data, classification):
+
+    print("[CONTEXT] Building context")
+
+    return {
+        "client_id": client_id,
+        "invoice": invoice_data,
+        "classification": classification
+    }
+===============================
+backend/engines/materiality_engine.py
+from engines.llm_client import LLMClient
+
+llm = LLMClient()
+
+
+def run_materiality_analysis(context: dict):
+
+    print("[ENGINE] Running materiality analysis")
+
+    prompt = f"""
+    Analyze this operation:
+
+    Client: {context['client_id']}
+    Type: {context['classification']}
+    Description: {context['invoice'].get('description')}
+    """
+
+    llm_response = llm.generate(prompt)
+
+    return {
+        "analysis": llm_response["response"],
+        "status": "generated"
+    }
+===============================
+backend/generators/output_generator.py
+def generate_output(
+    invoice,
+    classification,
+    required_docs,
+    context,
+    materiality
+):
+
+    print("[OUTPUT] Generating final output")
+
+    return {
+        "invoice_data": invoice,
+        "classification": classification,
+        "required_documents": required_docs,
+        "context": context,
+        "materiality": materiality,
+        "final_output": "OK"
+    }
+===============================
+END OF SNAPSHOT
