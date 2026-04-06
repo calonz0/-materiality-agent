@@ -1,83 +1,103 @@
-async function sendMessage() {
-    const input = document.getElementById("messageInput");
-    const message = input.value;
 
-    if (!message) return;
+const chat = document.getElementById("chat");
+const input = document.getElementById("messageInput");
+const statusDiv = document.getElementById("status");
 
-    addMessage("You", message, "user");
-    input.value = "";
-
-    try {
-        const response = await fetch("http://localhost:8000/chat", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                client_id: "web_user",
-                message: message
-            })
-        });
-
-        const data = await response.json();
-
-        console.log("BACKEND RESPONSE:", data);
-
-        if (data && data.message) {
-            addMessage("System", data.message, "bot");
-        } else {
-            addMessage("System", "⚠️ Respuesta vacía del servidor", "bot");
-        }
-
-    } catch (err) {
-        console.error("ERROR:", err);
-        addMessage("System", "❌ Error conectando al backend", "bot");
-    }
-}
-
-
-function addMessage(sender, text, type) {
-    const chat = document.getElementById("chat");
-
-    const msg = document.createElement("div");
-    msg.style.marginBottom = "10px";
-
-    msg.innerHTML = `<strong>${sender}:</strong> ${text}`;
-
-    chat.appendChild(msg);
+function addMessage(text, type) {
+    const div = document.createElement("div");
+    div.className = "message " + type;
+    div.innerText = text;
+    chat.appendChild(div);
     chat.scrollTop = chat.scrollHeight;
 }
 
+// SEND MESSAGE
+async function sendMessage() {
+    const msg = input.value;
+    if (!msg) return;
 
-async function uploadFile() {
-    const fileInput = document.getElementById("fileInput");
-    const files = fileInput.files;
+    addMessage("You: " + msg, "user");
+    input.value = "";
 
-    if (!files.length) {
-        alert("Selecciona archivos primero");
-        return;
+    const res = await fetch("http://127.0.0.1:8000/chat", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({message: msg})
+    });
+
+    const data = await res.json();
+
+    addMessage("System: " + (data.response || "No response"), "system");
+}
+
+// ENTER KEY
+input.addEventListener("keydown", function(e) {
+    if (e.key === "Enter") {
+        e.preventDefault();
+        sendMessage();
     }
+});
+
+// UPLOAD FILE
+async function uploadFile() {
+    const file = document.getElementById("fileInput").files[0];
+    if (!file) return alert("Select file");
 
     const formData = new FormData();
+    formData.append("file", file);
 
-    for (let i = 0; i < files.length; i++) {
-        formData.append("files", files[i]);
-    }
+    statusDiv.innerText = "Flow: Uploading...";
 
     try {
-        const response = await fetch("http://localhost:8000/upload", {
+        const res = await fetch("http://127.0.0.1:8000/upload", {
             method: "POST",
             body: formData
         });
 
-        const data = await response.json();
+        const data = await res.json();
 
         console.log("UPLOAD RESPONSE:", data);
 
-        addMessage("System", "Archivos subidos correctamente", "bot");
+        if (!data.operation_type) {
+            addMessage("System: Upload failed", "system");
+            return;
+        }
+
+        statusDiv.innerText = "Flow: Classified";
+
+        addMessage("Detected: " + data.operation_type, "system");
+        addMessage("Reason: " + data.justification, "system");
+
+        showDecision();
 
     } catch (err) {
-        console.error("UPLOAD ERROR:", err);
-        addMessage("System", "❌ Error subiendo archivos", "bot");
+        console.error(err);
+        addMessage("System: Upload error", "system");
     }
+}
+
+// CONFIRM / REJECT UI
+function showDecision() {
+    const div = document.createElement("div");
+
+    div.innerHTML = `
+        <br>
+        <button onclick="confirmDecision(true)">✔ Confirm</button>
+        <button onclick="confirmDecision(false)">✖ Reject</button>
+    `;
+
+    chat.appendChild(div);
+}
+
+// CONFIRM ACTION
+async function confirmDecision(val) {
+    const res = await fetch("http://127.0.0.1:8000/chat", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({confirmation: val})
+    });
+
+    const data = await res.json();
+
+    addMessage("System: " + (data.response || ""), "system");
 }

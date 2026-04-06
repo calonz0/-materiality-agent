@@ -1,44 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>AI Fiscal Dashboard</title>
+<meta charset="UTF-8">
+<title>Materiality Agent 2026 — v1.2</title>
+<link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-    <h1>🧠 AI Fiscal Dashboard</h1>
+<div class="container">
+
+    <header>
+        <h1>Materiality Agent 2026</h1>
+        <p>AI-powered fiscal validation system</p>
+    </header>
 
     <!-- Upload -->
-    <div style="margin-bottom: 20px;">
-        <input type="file" id="fileInput" multiple>
-        <button onclick="uploadFile()">Upload Files</button>
+    <div class="upload-box">
+        <input type="file" id="fileInput">
+        <button onclick="uploadFile()">Upload XML</button>
     </div>
 
-    <!-- Chat Box -->
-    <div id="chat" style="
-        border: 1px solid #ccc;
-        padding: 15px;
-        height: 400px;
-        overflow-y: scroll;
-        background-color: #f9f9f9;
-        font-family: monospace;
-        margin-bottom: 10px;
-    ">
+    <!-- Status -->
+    <div id="status" class="status">Flow: Waiting</div>
+
+    <!-- Chat -->
+    <div id="chat" class="chat"></div>
+
+    <!-- Input -->
+    <div class="input-area">
+        <input id="messageInput" placeholder="Type a message...">
+        <button onclick="sendMessage()">Send</button>
     </div>
 
-    <!-- Input + Send -->
-    <div>
-        <input 
-            id="messageInput" 
-            type="text" 
-            placeholder="Type a message..." 
-            style="width: 70%; padding: 10px;"
-        >
-        <button onclick="sendMessage()" style="padding: 10px;">Send</button>
-    </div>
+</div>
 
-    <script src="app.js"></script>
-
+<script src="app.js"></script>
 </body>
 </html>

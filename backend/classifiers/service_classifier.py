@@ -1,37 +1,32 @@
-from backend.engines.llm_client import LLMClient
+import requests
 
-
-def classify_operation(invoice_data):
-
-    text = str(invoice_data)
+def classify_operation(text: str):
 
     prompt = f"""
-You are an expert financial classifier.
+    Classify the following operation as PRODUCT or SERVICE.
+    Also explain WHY clearly.
 
-Classify this invoice as PRODUCT or SERVICE.
+    Text:
+    {text[:1000]}
+    """
 
-Rules:
-- PRODUCT = physical goods
-- SERVICE = consulting, maintenance, digital services
+    res = requests.post("http://localhost:11434/api/generate", json={
+        "model": "qwen2.5:3b-instruct-q4_K_M",
+        "prompt": prompt,
+        "stream": False
+    })
 
-Respond ONLY with:
-PRODUCT or SERVICE
+    data = res.json()
+    response = data.get("response", "")
 
-Invoice:
-{text}
-"""
+    print("[LLM RAW RESPONSE]:", response)
 
-    llm = LLMClient()
-    response = llm.generate(prompt)
+    if "service" in response.lower():
+        op_type = "SERVICE"
+    else:
+        op_type = "PRODUCT"
 
-    result = response.strip().upper()
-
-    print("[AI RAW RESPONSE]", result)
-
-    if "SERVICE" in result:
-        return "SERVICE"
-    elif "PRODUCT" in result:
-        return "PRODUCT"
-
-    return "SERVICE"
-
+    return {
+        "operation_type": op_type,
+        "justification": response
+    }

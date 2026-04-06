@@ -1,12 +1,13 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+# IMPORTS CORRECTOS
+from backend.interface.chat_handler import handle_chat
 from backend.api.v1.upload_routes import router as upload_router
-from backend.interface.chat_handler import handle_request
 
 app = FastAPI()
 
-# 🔥 CORS (permite conexión con frontend)
+# CORS (para que frontend funcione sin problemas)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -15,26 +16,17 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# 🔹 Root endpoint
+# 🔥 ENDPOINT CHAT
+@app.post("/chat")
+async def chat_endpoint(data: dict):
+    return handle_chat(data)
+
+
+# 🔥 ENDPOINT UPLOAD (router separado)
+app.include_router(upload_router)
+
+
+# 🔥 HEALTH CHECK (útil para debug)
 @app.get("/")
 def root():
-    return {"status": "ok"}
-
-# 🔹 Debug endpoint
-@app.get("/debug")
-def debug():
-    return {"message": "debug ok"}
-
-# 🔥 CHAT ENDPOINT (CORREGIDO)
-@app.post("/chat")
-async def chat(request: dict):
-    client_id = request.get("client_id", "test_client")
-    message = request.get("message", "")
-
-    response = handle_request(client_id, message)
-
-    # ✅ SIEMPRE devolver JSON con "message"
-    return {"message": str(response)}
-
-# 🔹 Upload routes
-app.include_router(upload_router)
+    return {"status": "Materiality Agent running"}
