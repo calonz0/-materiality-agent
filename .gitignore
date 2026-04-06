@@ -1,8 +1,90 @@
+# =========================
+# PYTHON
+# =========================
 __pycache__/
 *.pyc
-.env
+*.pyo
+*.pyd
+*.py[cod]
+
+# =========================
+# VIRTUAL ENV
+# =========================
 venv/
-node_modules/
+.env
+.env.*
+.venv/
+
+# =========================
+# LOGS
+# =========================
 *.log
-__pycache__/
-*.pyc
+logs/
+
+# =========================
+# DATABASE / LOCAL DATA
+# =========================
+*.sqlite3
+*.db
+*.db-journal
+
+# =========================
+# OS FILES
+# =========================
+.DS_Store
+Thumbs.db
+
+# =========================
+# IDE / EDITOR
+# =========================
+.vscode/
+.idea/
+*.swp
+
+# =========================
+# FRONTEND / NODE
+# =========================
+node_modules/
+dist/
+build/
+
+# =========================
+# STORAGE (CRÍTICO PARA TU PROYECTO)
+# =========================
+backend/storage/
+storage/
+
+# mantener carpetas vacías si quieres
+!backend/storage/.gitkeep
+!storage/.gitkeep
+
+# =========================
+# GENERATED FILES
+# =========================
+backend/templates/generated/
+
+# =========================
+# TEST FILES / OUTPUTS
+# =========================
+*.out
+*.tmp
+
+# =========================
+# UPLOADS (MUY IMPORTANTE)
+# =========================
+uploads/
+*.pdf
+*.xml
+*.docx
+
+# =========================
+# SYSTEM CONTEXT (OPCIONAL SI NO QUIERES EXPONER)
+# =========================
+# SYSTEM_CONTEXT.md
+# FRONTEND_CONTEXT.md
+# PROJECT_SNAPSH
+
+# =========================
+# CACHE / MISC
+# =========================
+.cache/
